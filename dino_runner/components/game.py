@@ -33,7 +33,8 @@ class Game:
                 self.playing = False
 
     def update(self):
-        pass
+        user_input = pygame.key.get_pressed()
+        self.player.update(user_input) # type: ignore
 
     def draw(self):
         self.clock.tick(FPS)
