@@ -1,6 +1,7 @@
+import random
 import pygame
+from dino_runner.components.obstacles.bird import Bird
 from dino_runner.components.obstacles.cactus import Cactus
-from dino_runner.utils.constants import SMALL_CACTUS
 
 class ObstableManager:
 
@@ -10,8 +11,8 @@ class ObstableManager:
 
     def update(self, game):
         if len(self.obstacles) == 0:
-            cactus = Cactus(SMALL_CACTUS) 
-            self.obstacles.append(cactus)
+            obstacle = self.generate_obstacle(random.randint(0, 2))
+            self.obstacles.append(obstacle)
 
         for obstacle in self.obstacles:
             obstacle.update(game.game_speed, self.obstacles)
@@ -22,3 +23,14 @@ class ObstableManager:
     def draw(self, screen):
         for obstacle in self.obstacles:
             obstacle.draw(screen)
+
+    def generate_obstacle(self, obstacle_type):
+        if obstacle_type == 0:
+            cactus_type = 'SMALL'
+            obstacle = Cactus(cactus_type)
+        elif obstacle_type == 1:
+            cactus_type = 'LARGE'
+            obstacle = Cactus(cactus_type)
+        else:
+            obstacle = Bird()
+        return obstacle
