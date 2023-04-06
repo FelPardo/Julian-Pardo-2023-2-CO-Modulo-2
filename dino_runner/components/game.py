@@ -22,6 +22,7 @@ class Game:
         self.menu = Menu(self.screen, "Press any key to start")
         self.running = False
         self.score = 0
+        self.max_score = 0
         self.death_counts = 0
 
     def run(self):
@@ -29,7 +30,7 @@ class Game:
         self.playing = True
         self.obstacle_manager.reset_obstacles()
         self.game_speed = self.GAME_SPEED
-        self.score = 0
+        self.reset_game()
         while self.playing:
             self.events()
             self.update()
@@ -62,6 +63,7 @@ class Game:
         self.player.draw(self.screen)
         self.obstacle_manager.draw(self.screen)
         self.draw_score()
+        self.draw_max_score()
         pygame.display.update()
         pygame.display.flip()
 
@@ -77,23 +79,62 @@ class Game:
     def show_menu(self):
         self.menu.reset_screen_color(self.screen)
         half_screen_width = SCREEN_WIDTH // 2
-        hal_screen_height = SCREEN_HEIGHT // 2
-        self.screen.blit(ICON, (half_screen_width - 50, hal_screen_height - 140))
+        half_screen_height = SCREEN_HEIGHT // 2
+        self.screen.blit(ICON, (half_screen_width - 50, half_screen_height - 140))
         if self.death_counts == 0:
             self.menu.draw(self.screen)
         else:
-            self.menu.update_message("Dino has died")
+            self.menu.update_message("GAME OVER! PRESS ANY KEY TO PLAY AGAIN")
             self.menu.draw(self.screen)
+            self.draw_score()
+            self.draw_max_score()
+            self.draw_death_count()
         self.menu.update(self)
 
     def update_score(self):
         self.score +=1 
         if self.score % 100 == 0 and self.game_speed < 500:
-            self.game_speed += 5
+            self.game_speed += 1
 
     def draw_score(self):
+        half_screen_width = SCREEN_WIDTH // 2
+        half_screen_height = SCREEN_HEIGHT // 2
         font = pygame.font.Font(FONT_STYLE, 30)
         text = font.render(f'Score: {self.score}', True, (0, 0, 0))
         text_rect = text.get_rect()
-        text_rect.center = (1000, 50)
+        if self.playing:
+            text_rect.center = (750, 50)
+        else:
+            text_rect.center = (half_screen_width - 240, half_screen_height - 240)
         self.screen.blit(text,text_rect)
+    
+    def cal_max_score(self):
+        if self.score > self.max_score:
+            self.max_score = self.score
+        return self.max_score    
+    
+    def draw_max_score(self):
+        half_screen_width = SCREEN_WIDTH // 2
+        half_screen_height = SCREEN_HEIGHT // 2
+        font = pygame.font.Font(FONT_STYLE, 30)
+        text = font.render(f'Max Score: {self.cal_max_score()}', True, (0, 0, 0))
+        text_rect = text.get_rect()
+        if self.playing:
+            text_rect.center = (950, 50)
+        else:
+            text_rect.center = (half_screen_width + 240, half_screen_height - 240)
+        self.screen.blit(text,text_rect)
+
+    def draw_death_count(self):
+        half_screen_width = SCREEN_WIDTH // 2
+        half_screen_height = SCREEN_HEIGHT // 2
+        font = pygame.font.Font(FONT_STYLE, 30)
+        text = font.render(f'Death counts: {self.death_counts}', True, (0, 0, 0))
+        text_rect = text.get_rect()
+        text_rect.center = (half_screen_width, half_screen_height + 240)
+        self.screen.blit(text,text_rect)
+
+    def reset_game(self):
+        self.obstacle_manager.reset_obstacles()
+        self.game_speed = self.GAME_SPEED
+        self.score = 0
