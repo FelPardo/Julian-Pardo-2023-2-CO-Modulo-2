@@ -53,7 +53,8 @@ class Game:
 
     def update(self):
         user_input = pygame.key.get_pressed()
-        self.player.update(user_input) # type: ignore
+        self.player.update(user_input)
+        self.power_up_manager.dropped_hammer(self, user_input)
         self.obstacle_manager.update(self)
         self.update_score()
         self.power_up_manager.update(self)
@@ -144,6 +145,7 @@ class Game:
         self.score = 0
         self.power_up_manager.reset_power_ups()
         self.player.reset()
+        self.player.has_power_up = False
 
     def draw_power_up(self):
         if self.player.has_power_up:

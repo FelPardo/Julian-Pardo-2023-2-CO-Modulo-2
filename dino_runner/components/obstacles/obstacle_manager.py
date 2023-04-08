@@ -4,7 +4,7 @@ from dino_runner.components.obstacles.bird import Bird
 from dino_runner.components.obstacles.cactus import Cactus
 from dino_runner.utils.constants import SHIELD_TYPE
 
-class ObstableManager:
+class ObstableManager():
 
     def __init__(self):
         self.obstacles = []
@@ -24,6 +24,11 @@ class ObstableManager:
                     break
                 else:
                     self.obstacles.remove(obstacle)
+            if len(game.power_up_manager.hammer) == 1:
+                if obstacle.rect.colliderect(game.power_up_manager.hammer[0].rect):
+                    self.obstacles.remove(obstacle)
+                    game.power_up_manager.hammer = []
+
 
     def draw(self, screen):
         for obstacle in self.obstacles:
